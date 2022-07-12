@@ -1,9 +1,15 @@
+import { getSession } from 'next-auth/react'
 import Head from 'next/head'
-import Image from 'next/image'
+// import Image from 'next/image'
 import Header from '../Components/Header'
-import styles from '../styles/Home.module.css'
+import Login from '../Components/Login'
+// import styles from '../styles/Home.module.css'
 
-export default function Home() {
+
+export default function Home({session}) {
+  if(!session){
+     <Login/>
+    }
   return (
     <div>
       <Head>
@@ -19,4 +25,16 @@ export default function Home() {
       
     </div>
   )
+}
+
+export async function getServerSideProps(context){
+  //context is the request
+  //Get the user
+  const session = await getSession(context);
+
+  return{
+    props:{
+      session:session,
+    }
+  }
 }
