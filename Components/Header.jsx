@@ -21,7 +21,7 @@ import Login from "./Login";
 
 const Header = () => {
   const { data: session } = useSession();
-  console.log(session);
+  // console.log(session);
 
   // const { data: session } = useSession()
   if (session) {

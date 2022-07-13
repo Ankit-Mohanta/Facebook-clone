@@ -1,8 +1,10 @@
 import { getSession } from 'next-auth/react'
 import Head from 'next/head'
+import Feed from '../Components/Feed'
 // import Image from 'next/image'
 import Header from '../Components/Header'
 import Login from '../Components/Login'
+import Sidebar from '../Components/Sidebar'
 // import styles from '../styles/Home.module.css'
 
 
@@ -11,15 +13,17 @@ export default function Home({session}) {
      <Login/>
     }
   return (
-    <div>
+    <div className='h-screen overflow-hidden'>
       <Head>
         <title>Facebook clone</title>
       </Head>
       {/* Header */}
       <Header/>
-      <main>
+      <main className='flex'>
         {/* Sidebar */}
+        <Sidebar/>
         {/* Feed */}
+        <Feed/>
         {/* Widgets */}
       </main>
       
