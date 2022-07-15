@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { EmojiHappyIcon } from "@heroicons/react/outline";
 import { CameraIcon, VideoCameraIcon } from "@heroicons/react/solid";
 import { db, storage } from "../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { child, push, update } from "firebase/database";
 
 const InputBox = () => {
   const { data: session } = useSession();
@@ -26,11 +27,6 @@ const InputBox = () => {
       setImageToShow(readerEvent.target.result);
     };
   };
-
-  // const addImageToPost = (e) => {
-  //   e.preventDefault();
-  //   setImageToPost(e.target.files[0]);
-  // };
 
   const uploadFile = () => {
     // const name = new Date().getTime() + imageToPost.name;
@@ -82,10 +78,13 @@ const InputBox = () => {
         image: session.user.image,
         timestamp: Date.now(),
       };
-      await setDoc(doc(db, "posts", session.user.name), data).then(
+      // await setDoc(doc(db, "posts", session.user.name), data).then(
+        const newPostRef = doc(collection(db, "posts"));
+        await setDoc(newPostRef, data).then(
+      // await setDoc(doc(db, "posts", session.user.name), data).then(
         () => {
           if(imageToPost){
-            uploadFile();
+            uploadFile();  
             removeImage();
           }
         }
@@ -107,7 +106,7 @@ const InputBox = () => {
           <input
             type="text"
             ref={inputRef}
-            className="rounded-full h-12 bg-gray-100 flex-grow px-5 focus:outline-none"
+            className="rounded-full h-12 bg-gray-100 flex-grow px-5 focus:outline-none focus:text-gray-500"
             placeholder={`what's in your min ${session.user.name}?`}
           />
           <button hidden onClick={sendPost} type="submit">
