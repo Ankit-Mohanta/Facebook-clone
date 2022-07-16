@@ -21,7 +21,7 @@ const Post = ({name,message,email,image,postImage,timestamp}) => {
         </div>
         {postImage&&(
             <div className='relative h-56 md:h-96 bg-white'>
-                <Image
+                <img
                 src={postImage}
                 objectFit='cover'
                 layout='fill'

@@ -29,7 +29,6 @@ const InputBox = () => {
   };
 
   const uploadFile = () => {
-    // const name = new Date().getTime() + imageToPost.name;
     const imageRef = ref(storage, imageToPost.name);
     const uploadTask = uploadBytesResumable(imageRef, imageToPost);
 
@@ -52,10 +51,19 @@ const InputBox = () => {
         }
       },
       (error) => {
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      },() => {
+        getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
           console.log("File available at", downloadURL);
+          const data={
+            name:session.user.name,
+            message:inputRef.current.value,
+            email:session.user.email,
+            image:session.user.image,
+            timestamp:Date.now(),
+            postImage:downloadURL,
+          };
+          const newPostRef = doc(collection(db, "posts"));
+          await setDoc(newPostRef, data)
         });
       }
     );
@@ -71,26 +79,22 @@ const InputBox = () => {
     if (!inputRef.current.value) {
       return;
     } else {
-      const data = {
-        name: session.user.name,
-        message: inputRef.current.value,
-        email: session.user.email,
-        image: session.user.image,
-        timestamp: Date.now(),
-      };
-      // await setDoc(doc(db, "posts", session.user.name), data).then(
+      if(imageToPost){
+        uploadFile();
+        removeImage();
+      }else{
+        const data={
+          name:session.user.name,
+          message:inputRef.current.value,
+          email:session.user.email,
+          image:session.user.image,
+          timestamp:Date.now(),
+        };
         const newPostRef = doc(collection(db, "posts"));
-        await setDoc(newPostRef, data).then(
-      // await setDoc(doc(db, "posts", session.user.name), data).then(
-        () => {
-          if(imageToPost){
-            uploadFile();  
-            removeImage();
-          }
-        }
-      );
-      inputRef.current.value = "";
+        await setDoc(newPostRef, data)
+      }
     }
+    inputRef.current.value = "";
   };
   return (
     <div className="bg-white p-2 rounded-2xl shadow-md text-gray-100 font-medium mt-6">
